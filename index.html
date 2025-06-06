@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>phucphancode</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: #000;
+    }
+
+    .logo-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      animation: pulse 2s infinite;
+    }
+
+    .logo-img {
+      width: 220px;
+      height: auto;
+      filter: drop-shadow(0 0 20px #ffffff80) drop-shadow(0 0 40px #ffffff40);
+    }
+
+    @keyframes pulse {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      50% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.85; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="particles-js"></div>
+
+  <div class="logo-container">
+    <img src="https://i.postimg.cc/fL0Vy2ZB/IMG-0079.png" alt="LOGO VIP" class="logo-img">
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script>
+    particlesJS("particles-js", {
+      "particles": {
+        "number": { "value": 90, "density": { "enable": true, "value_area": 800 } },
+        "color": { "value": "#ffffff" },
+        "shape": { "type": "circle" },
+        "opacity": { "value": 0.5, "random": true },
+        "size": { "value": 3.5, "random": true },
+        "line_linked": {
+          "enable": true,
+          "distance": 150,
+          "color": "#ffffff",
+          "opacity": 0.35,
+          "width": 1
+        },
+        "move": {
+          "enable": true,
+          "speed": 2.5,
+          "random": true,
+          "out_mode": "bounce"
+        }
+      },
+      "interactivity": {
+        "events": {
+          "onhover": { "enable": true, "mode": "grab" },
+          "onclick": { "enable": true, "mode": "push" }
+        },
+        "modes": {
+          "grab": { "distance": 140, "line_linked": { "opacity": 1 } }
+        }
+      },
+      "retina_detect": true
+    });
+
+    
+    setTimeout(() => {
+      window.location.href = "inde.html";
+    }, 4000);
+  </script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>phucphancode</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #000; 
+      overflow: hidden;
+    }
+
+    .snowflake {
+      position: fixed;
+      top: -10px;
+      color: #ffffff;
+      font-size: 10px;
+      user-select: none;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.8;
+      animation-name: fall;
+      animation-timing-function: linear;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(100vh) rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<script>
+  const snowCount = 60; 
+  for (let i = 0; i < snowCount; i++) {
+    const snowflake = document.createElement("div");
+    snowflake.classList.add("snowflake");
+    snowflake.innerText = "❄";
+    snowflake.style.left = Math.random() * 100 + "vw";
+    snowflake.style.animationDuration = (5 + Math.random() * 5) + "s";
+    snowflake.style.fontSize = (6 + Math.random() * 6) + "px";
+    snowflake.style.opacity = Math.random().toFixed(2);
+    snowflake.style.animationDelay = Math.random() * 5 + "s";
+    document.body.appendChild(snowflake);
+  }
+</script>
+
+</body>
+</html>

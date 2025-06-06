@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phuc Phan X Tweak</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: black;
+      color: #fff;
+      overflow-x: hidden;
+    }
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+    }
+    .snow-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .snowflake {
+      position: absolute;
+      top: -10px;
+      color: #00fff7;
+      font-size: 10px;
+      user-select: none;
+      opacity: 0.85;
+      text-shadow: 0 0 5px #00fff7, 0 0 10px #00fff7, 0 0 15px #00fff7;
+      animation: fall linear infinite;
+    }
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+    .container {
+      max-width: 500px;
+      margin: 60px auto;
+      padding: 20px;
+      text-align: center;
+      animation: fadeIn 1.5s ease;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #00ffcc;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+      backdrop-filter: blur(10px);
+    }
+    h1 { font-size: 32px; color: #00ffcc; }
+    .setting {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 20px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 20px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #00ffcc;
+    }
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+    .dropdown, .input-box {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      background: #111;
+      border: 1px solid #00ffcc;
+      color: #00ffcc;
+      border-radius: 6px;
+    }
+    .textarea-box {
+      width: 100%;
+      height: 120px;
+      background: #111;
+      color: #00ffcc;
+      border: 1px solid #00ffcc;
+      border-radius: 8px;
+      padding: 10px;
+      font-family: monospace;
+      resize: none;
+      transition: 0.3s;
+    }
+    .run-btn, .stop-btn, .activate-btn, .main-download-btn, .link-btn {
+      background: #00ffcc;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      color: #000;
+      transition: 0.3s;
+    }
+    .run-btn:hover, .stop-btn:hover, .activate-btn:hover, .main-download-btn:hover, .link-btn:hover {
+      background: #00ccaa;
+    }
+    .notify {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111;
+      padding: 12px 20px;
+      border: 1px solid #00ffcc;
+      border-radius: 10px;
+      color: #00ffcc;
+      font-size: 16px;
+      opacity: 0;
+      transition: 0.4s;
+      z-index: 999;
+    }
+    .links {
+      margin-top: 20px;
+    }
+    .links a {
+      color: #00ffcc;
+      margin: 0 10px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .logo {
+      width: 80px;
+      margin-bottom: 10px;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes glitchText {
+      0% { text-shadow: 1px 0 red, -1px 0 cyan; transform: skewX(0deg); }
+      100% { text-shadow: -1px 0 red, 1px 0 cyan; transform: skewX(1deg); }
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <div class="snow-container" id="snow-container"></div>
+  <audio id="beepSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+  <div class="notify" id="notify"></div>
+
+  <div class="container">
+    <img src="https://i.postimg.cc/fL0Vy2ZB/IMG-0079.png" class="logo" alt="Logo" />
+    <h1><span class="lux">Phuc Phan</span> <span class="config">Tweak</span></h1>
+
+    <div class="card">
+      <h2>CHỨC NĂNG</h2>
+      <div class="setting"><span>Aimlock</span><label class="switch"><input type="checkbox" onclick="showMessage('Chạy thành công ')"><span class="slider"></span></label></div>
+      <div class="setting"><span>HeadLock</span><label class="switch"><input type="checkbox" onclick="showMessage('Chạy thành công ')"><span class="slider"></span></label></div>
+      <div class="setting"><span>BoostCpu</span><label class="switch"><input type="checkbox" onclick="showMessage('Chạy thành công ')"><span class="slider"></span></label></div>
+      <div class="setting"><span>Auto Head Aim</span><label class="switch"><input type="checkbox" onclick="showMessage('Chạy thành công ')"><span class="slider"></span></label></div>
+      <div class="setting"><span>Sensitivity</span><label class="switch"><input type="checkbox" onclick="showMessage('Chạy thành công ')"><span class="slider"></span></label></div>
+
+      <button class="main-download-btn" onclick="toggleSubButtons()">📁 TẢI FILE</button>
+      <div id="subDownloadButtons" style="display: none;">
+        <button class="link-btn" onclick="window.location.href='https://link4m.com/nB0YBX'">📱 TẢI CHO ANDROID</button>
+        <button class="link-btn" onclick="window.location.href='https://link4m.com/beu9i84'">🍏 TẢI CHO IOS</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>DÁN CODE CONFIG</h2>
+      <textarea id="xmlCode" class="textarea-box" placeholder="Dán code config vào đây..."></textarea><br>
+      <button class="run-btn" onclick="autoPaste()">📥 DÁN CONFIG VIP</button>
+      <button class="stop-btn" onclick="runCrazyEffect()">🔥 CHẠY CONFIG VIP</button>
+    </div>
+
+    <div class="card">
+      <h2>📲 Phuc Phan</h2>
+      <div class="setting"><span>🖥•</span><div class="input-box">Thiết bị hoạt động</div></div>
+      <div class="setting"><span>🎮•</span>
+        <select class="dropdown">
+          <option>Mượt</option><option>Nhanh</option><option>Siêu Mượt</option>
+        </select>
+      </div>
+      <div class="setting"><span>🖱️•</span>
+        <select class="dropdown">
+          <option>1.0x</option><option>1.5x</option><option>2.0x</option><option>2.5x</option><option>3.0x</option><option>3.5x</option><option>4.0x</option>
+        </select>
+      </div>
+      <button class="activate-btn" onclick="showMessage('Chạy thành công ')">SENSI ACTIVE</button>
+    </div>
+
+    <div class="links">
+      <a href="https://zalo.me/0964943392" target="_blank">Zalo</a>
+      <a href="https://www.facebook.com/share/1GfrU8Vj7d/?mibextid=wwXIfr" target="_blank">Facebook</a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script>
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 80 },
+        color: { value: "#00ffcc" },
+        shape: { type: "circle" },
+        opacity: { value: 0.5 },
+        size: { value: 3 },
+        move: { enable: true, speed: 1 }
+      },
+      interactivity: {
+        events: { onhover: { enable: true, mode: "repulse" } }
+      }
+    });
+
+    const snowContainer = document.getElementById('snow-container');
+    function createSnowflake() {
+      const snowflake = document.createElement('div');
+      snowflake.classList.add('snowflake');
+      snowflake.innerHTML = '❄';
+      const size = Math.random() * 1 + 2;
+      snowflake.style.fontSize = `${size}px`;
+      snowflake.style.left = Math.random() * window.innerWidth + 'px';
+      snowflake.style.animationDuration = (Math.random() * 1 + 3) + 's';
+      snowContainer.appendChild(snowflake);
+      setTimeout(() => snowflake.remove(), 15000);
+    }
+    setInterval(createSnowflake, 80);
+
+    function playBeep() {
+      const beep = document.getElementById('beepSound');
+      if (beep) beep.play();
+    }
+
+    function showMessage(msg) {
+      const n = document.getElementById('notify');
+      n.innerText = msg;
+      n.style.opacity = 1;
+      playBeep();
+      setTimeout(() => { n.style.opacity = 0; }, 2000);
+    }
+
+    function autoPaste() {
+      const code = `<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+⚡ Config by Phuc Phan - Ultra VIP Pro v5.9 ⚡
+        Engine : Unreal Engine 5.3 / Unity 2025
+        Optimized for: Free Fire th, Free Fire MAX,
+        Features : AutoAim, AntiLag, DeviceSpoofing, AI-Bootstrap
+-->
+<phucphancode version="5.5-GODMODE" engine="UnrealEngine5.5.1/Unity2025.3.2" author="PhucPhanCoder-UltimateVIPXPlusProOverdrive">
+
+    <AutoAdapt>
+        <DeviceDetection enabled="true" AIProfiler="QuantumDeepScan-V7">
+            <MinRAM>8GB</MinRAM>
+            <CPUScore threshold="3000" />
+            <DynamicProfileSwitch enabled="true" learningMode="UltraReinforcedNeuralAI" smartPredictor="TrueFPS++" />
+        </DeviceDetection>
+        <Presets>
+            <UltraLowDevice fallback="NanoLite-AIPlus" />
+            <LowDevice fallback="SmartBoost-QuantumLite" />
+            <MidDevice fallback="AI-PerformanceX" />
+            <HighDevice fallback="GodRayFusionX" />
+            <UltraDevice fallback="UltimateQuantumCore++" />
+        </Presets>
+    </AutoAdapt>
+
+    <SystemPerformance>
+        <Graphics>
+            <Resolution width="4096" height="2160" dynamicScaling="AI-4D-AutoScaling" upscale="QuantumAI-X4K" />
+            <Quality preset="UltimateQuantumCore++">
+                <Textures>GODTEXTURE-MaxUltraHD10K</Textures>
+                <Shadows>RTX-GlobalVolumetric-DualSoft</Shadows>
+                <PostProcessing>NeonHDR++AIColorGrade</PostProcessing>
+                <Reflections>PhysicallyAccurateRayPath-AI</Reflections>
+                <AntiAliasing>SuperXSR4-DynamicAI-Edge</AntiAliasing>
+                <VSync>AutoSmart++V-Sense</VSync>
+                <ParticleFX level="NebulaVolumetric-V5" />
+                <DrawDistance mode="HorizonBeyond" value="Infinity" />
+                <LightRendering>
+                    <Type>AI-RayCascade</Type>
+                    <Bloom>PhotonBloom++</Bloom>
+                    <GodRays enabled="true" dynamicDepth="auto" />
+                    <WeatherEffects>DynamicRainStormAI</WeatherEffects>
+                </LightRendering>
+            </Quality>
+            <FrameRate>
+                <Target>480</Target>
+                <Unlock>true</Unlock>
+                <Stability>NeuralAdaptive-Lock</Stability>
+                <AIFrameGuard autoFixStutters="true" />
+            </FrameRate>
+        </Graphics>
+
+        <HardwareOptimization>
+            <CPU mode="GODTHREAD-AI-AutoSplit" maxThreads="hyperAuto" corePriority="GOD-First" scheduler="Zen9X-LivePredictor" />
+            <GPU boost="NeuralAI-OCMAX" thermalCap="65" dynamicThrottle="GODBalancer-AI" fanCurve="AI-LiquidCool" dualGPUEnabled="true" />
+            <RAM usageCap="UltraSmartDynamic" aggressiveMode="AI-Infinity" hybridStreaming="QuantumPredictive-PreloadV6" memoryCompression="SmartMemZ" />
+            <IOTuning scheduler="UltimateNoop++" readAhead="32768" ioBurst="infinityBoostAI" diskQueueDepth="128" />
+        </HardwareOptimization>
+    </SystemPerformance>
+
+    <Controls>
+        <TouchSensitivity>
+            <General value="100%" />
+            <ADS value="90%" />
+            <Scope value="88%" />
+        </TouchSensitivity>
+        <Gyroscope enabled="true" pitch="1.05" yaw="1.08" smartAdjust="QuantumGyroPredict" shakeFilter="AI-StableGyro+" />
+        <Layout profile="10FingerElite-UltraGhost-XHUD" customHUD="true" adaptiveHUD="GOD-VR-LikeHUD" />
+    </Controls>
+
+    <Gameplay>
+        <AutoPickup enabled="true" range="20m" smartFilter="GODPriority+" priority="Mythic,CoreArmor,TacticalSniper,Throwable,Healing" />
+        <AimAssist enabled="true" type="HyperPredictAI-Tracking" strength="GODLEVEL-AutoAI" snapStrength="contextAware">
+            <AdaptByDistance enabled="true" precisionBoost="ultraAI" />
+            <EnvironmentAware enabled="true" reaction="smartPreAim" />
+        </AimAssist>
+        <Crosshair dynamic="true" color="#00FFF0" pulse="AIQuantumGlow" glow="extreme" sizeAdapt="auto" />
+        <HitFeedback>
+            <HitMarker style="GodRayBlast" sound="NanoImpact" animate="true" vibration="true" vibrationMode="contextAI" />
+            <KillEffect type="QuantumWarp-DimensionCollapse" flash="true" sound="HyperBlast" duration="2s" />
+        </HitFeedback>
+        <MovementBoost>
+            <SlideCancel enabled="true" timingAssist="AI-PerfectFrame" cooldownPredictor="Smart" />
+            <AutoSprint mode="360Direction-Ultra" adaptiveCurve="deepAI" boostOnLanding="true" />
+            <ParkourEnhance enabled="true" wallClimbBoost="AI-SmartEdge" />
+        </MovementBoost>
+        <WeaponHandling>
+            <ADSLockSpeed>SuperFast</ADSLockSpeed>
+            <ReloadBoost>TrueSmartReload++</ReloadBoost>
+            <SwitchSpeed>QuantumInstant</SwitchSpeed>
+        </WeaponHandling>
+    </Gameplay>
+
+    <Audio>
+        <SoundQuality>QuantumInsane++</SoundQuality>
+        <3DSound enabled="true" dynamicEQ="AI-NeuralHRTF" HRTF="OmniFullSpatial" />
+        <FootstepBoost level="4.0x" distance="hyperReal" materialDetect="AI-DeepFootSensory" surfaceAware="true" />
+        <VoiceChat codec="OPUS-GODX" noiseSuppression="AI-PureCleanV3" clarity="AIHyperClear" autoGain="ultra" echoCancel="true" />
+    </Audio>
+
+    <Network>
+        <LatencyOptimization>
+            <TargetPing>5ms</TargetPing>
+            <Stabilizer mode="Ultimate5G-AI" autoDropPackets="true" jitterFix="AI-JitterSmoothUltra" burstControl="true" edgeDetect="deepAI" />
+            <GamePriority>GODMAX</GamePriority>
+            <AutoReconnect>true</AutoReconnect>
+        </LatencyOptimization>
+        <Proxy>
+            <Type>SOCKS5</Type>
+            <Server>node.phucvpn.vip</Server>
+            <Port>443</Port>
+            <Fallback>vipserver2.phucvpn.vip</Fallback>
+            <GeoRouting enabled="true" latencyBased="AIQuantum" regionLockBypass="true" />
+        </Proxy>
+        <DNS>1.1.1.1, 8.8.8.8, 9.9.9.9, 94.140.14.14</DNS>
+    </Network>
+
+    <UI>
+        <HUD style="NeoGlassUltra-VR" opacity="99%" dynamicScale="auto" blur="CrystalHyperBlur" realTimeData="enabled" />
+        <Notifications effect="ShockPulse++" sound="NotifyGodElite" color="#00FFE5" vibration="hapticPowerful" />
+        <BattleLog realTime="true" expanded="true" AIHighlight="true" killStreakEffect="HyperBurnIn" />
+    </UI>
+
+    <AntiLagSystem>
+        <AutoGraphicsAdjust ifFPSBelow="144" fallback="GodAI-Limiter" switchDelay="300ms" preloadNextFrame="true" />
+        <PingGuard autoDropPacketsAbove="150ms" packetRecovery="AI-GhostFix" jitterSmooth="enhanced" netCacheOptim="true" />
+        <MemoryMonitor autoClearCache="true" interval="45s" AIPredictiveClear="neuralSmartFlush" backgroundGC="true" />
+        <ThreadSyncOptimization enabled="true" smartThreading="AI-DualChannel-Neural" asyncBuffering="true" />
+    </AntiLagSystem>
+
+    <DeviceSpoofing>
+        <Model></Model>
+        <GPU></GPU>
+        <Build></Build>
+        <AndroidVersion></AndroidVersion>
+        <SignatureHash></SignatureHash>
+        <IMESpoof enabled="true" pattern="ZFoldX-Ghost-UltraPro" fullFingerprint="true" bootloaderBypass="true" />
+    </DeviceSpoofing>
+
+    <Security>
+        <EmulatorCheck bypass="AI-KernelStealthV2" enhancedScan="true" />
+        <RootDetection evasion="QuantumStealth" method="KernelModeBypassAI" />
+        <HWIDProtection level="AIQuantumUntraceable" aiTraceBlock="true" bootIntegrity="enforced" />
+        <AntiDebug>
+            <PtraceDetect enabled="true" AIObfuscate="quantumLevel" />
+            <MemoryScannerBypass>true</MemoryScannerBypass>
+            <AntiInjectProtect>true</AntiInjectProtect>
+            <KernelTamperProtection enabled="true" aiGuard="enabled" />
+        </AntiDebug>
+    </Security>
+
+    <DeveloperTools hidden="true">
+        <DevConsole enabled="true" accessKey="ULTRA-PHUC-CODER-KEY" />
+        <GodModeSwitch enableOnKey="PowerUp999" />
+        <RenderStats visible="true" toggle="doubleTapFPS" />
+        <ProfileExport enable="true" format="json,xml,html" />
+    </DeveloperTools>
+
+    <FreeFireConfig package="com.dts.freefireth">
+        <Render>FreeFireUltimateUltra</Render>
+        <AimAssist mode="UltraLockAI-VIP+" prediction="god" smartSnap="true" />
+        <RecoilControl>AI-RecoilNeutralizerV6</RecoilControl>
+        <LagFix frameDropPatch="true" ramClean="30s" netStabilizer="FF-AI-NetMax+" />
+        <AutoHeadshot>TrueHyperPrecisionV9</AutoHeadshot>
+        <TouchBoost>True</TouchBoost>
+        <FPSLock max="144" stabilityMode="autoAI" />
+    </FreeFireConfig>
+
+    <FreeFireConfig package="com.dta.freefiremax">
+        <Render>FFMax-GODRENDER</Render>
+        <AimAssist mode="GodSnapX-AI" dynamicTracking="true" smartHitZone="enabled" />
+        <RecoilControl>RecoilKiller-MaxAuto</RecoilControl>
+        <LagFix frameDropPatch="true" ramClean="25s" netStabilizer="FFMax-StableQuantumAI" />
+        <AutoHeadshot>AIHyperHeadshotX++</AutoHeadshot>
+        <TouchBoost>GodTouchX</TouchBoost>
+        <FPSLock max="165" stabilityMode="AI-ProAdaptive" />
+        <ShaderBoost enabled="true" type="FFMax-NeonDeepGlow+" />
+    </FreeFireConfig>
+        <ExperimentalCodeRunner enabled="true" version="1.0">
+        <Description></Description>
+        <SupportedTypes>
+            <Type>XML</Type>
+            <Type>JSON</Type>
+            <Type>INI</Type>
+            <Type>Lua</Type>
+            <Type>JS</Type>
+        </SupportedTypes>
+        <SecureMode enabled="true" sandboxed="true" />
+        <CodeSlots maxSlots="3">
+            <Slot id="CustomCodeSlot1" type="auto" active="true">
+                <Description></Description>
+                <Code><![CDATA[
+                    <customConfig>
+                        <highlightEnemies>true</highlightEnemies>
+                        <customShader>DeepGlowX</customShader>
+                        <voiceLineTrigger>onKill</voiceLineTrigger>
+                    </customConfig>
+                ]]></Code>
+            </Slot>
+            <Slot id="CustomCodeSlot2" type="lua" active="false">
+                <Description></Description>
+                <Code><![CDATA[
+                    if device:getModel() == "UltraPro" then
+                        enable("AutoHeadshot")
+                        boost("FPS", 2.5)
+                    end
+                ]]></Code>
+            </Slot>
+            <Slot id="CustomCodeSlot3" type="json" active="false">
+                <Description>using System;
+using System.configuration;
+using System.shotbot
+using System.headlock
+using System.com.dts.freefireth
+using System.com.dts.freefiremax
+using System.Threading;
+
+public class AimLocker
+{
+    public static string AimLockHeadAll(string weapon)
+    {
+        if (weapon == "100%")
+        {
+            return "Aim lock activated with 100% accuracy for headshots on all enemies.";
+        }
+        else
+        {
+            return "Invalid weapon. Aim lock failed.";
+        }
+    }
+}
+
+public class Program
+{
+    public static bool AimLock100(double distance, double weaponAccuracy, double headshotPercentage)
+    {
+        double hitProbability = weaponAccuracy / distance;
+        double headshotChance = hitProbability * headshotPercentage;
+        double random = new Random().NextDouble();
+
+        return random <= headshotChance;
+    }
+
+    public static void Main(string[] args)
+    {
+        // Example usage of AimLocker class
+        Console.WriteLine(AimLocker.AimLockHeadAll("100%"));
+        Console.WriteLine(AimLocker.AimLockHeadAll("M1887"));
+
+        // Example usage of AimLock90 function
+        double distance = 80.0;
+        double weaponAccuracy = 10.0;
+        double headshotPercentage = 100.0;
+
+        bool isHeadshot = AimLock90(distance, weaponAccuracy, headshotPercentage);
+
+        if (isHeadshot)
+        {
+            Console.WriteLine("Aim lock headshot successful!");
+        }
+        else
+        {
+            Console.WriteLine("Aim lock headshot missed!");
+public class AimLocker
+{
+    public static string AimLockHeadAll(string weapon)
+    {
+        if (weapon == "100%")
+        {
+            return "Aim lock activated with 100% accuracy for headshots on all enemies.";
+        }
+        else
+        {
+            return "Invalid weapon. Aim lock failed.";
+        }
+    }
+}
+
+public class Program
+{
+    public static bool AimLock100(double distance, double weaponAccuracy, double headshotPercentage)
+    {
+        double hitProbability = weaponAccuracy / distance;
+        double headshotChance = hitProbability * headshotPercentage;
+        double random = new Random().NextDouble();
+
+        return random <= headshotChance;
+    }
+
+    public static void Main(string[] args)
+    {
+        // Example usage of AimLocker class
+        Console.WriteLine(AimLocker.AimLockHeadAll("100%"));
+        Console.WriteLine(AimLocker.AimLockHeadAll("MP40"));
+
+        // Example usage of AimLock90 function
+        double distance = 80.0;
+        double weaponAccuracy = 10.0;
+        double headshotPercentage = 100.0;
+
+        bool isHeadshot = AimLock90(distance, weaponAccuracy, headshotPercentage);
+
+        if (isHeadshot)
+        {
+            Console.WriteLine("Aim lock headshot successful!");
+        }
+        else
+        {
+            Console.WriteLine("Aim lock headshot missed!");
+public abstract class FreeFirePlayer
+{
+    public abstract void Shoot();
+}
+
+public sealed class AimLockExpert : FreeFirePlayer
+{
+    private double minAimLockPercentage;
+    private double maxAimLockPercentage;
+
+    public AimLockExpert(double minAimLockPercentage, double maxAimLockPercentage)
+    {
+        this.minAimLockPercentage = minAimLockPercentage;
+        this.maxAimLockPercentage = maxAimLockPercentage;
+    }
+
+    public override void Shoot()
+    {
+        if (IsAimLockSuccessful())
+        {
+            Console.WriteLine("Aim locked on target! Enemy eliminated!");
+        }
+        else
+        {
+            Console.WriteLine("Missed the target. Keep improving your aim!");
+        }
+    }
+
+    private bool IsAimLockSuccessful()
+    {
+        Random rand = new Random();
+        return rand.NextDouble() * (maxAimLockPercentage - minAimLockPercentage) + minAimLockPercentage
+            <= rand.NextDouble() * (maxAimLockPercentage - minAimLockPercentage) + minAimLockPercentage;
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        var player = new AimLockExpert(80.0, 90.0);
+        player.Shoot();
+public class HeadRestriction
+{
+    private bool headRestrictionEnabled;
+    private double headSpeedMultiplier;
+    private int sensitivityThreshold;
+
+    public HeadRestriction()
+    {
+        headRestrictionEnabled = false;
+        headSpeedMultiplier = 0.5; // Multiplier to reduce head movement speed
+        sensitivityThreshold = 70; // Sensitivity threshold to trigger head restriction
+    }
+
+    // Method to enable head restriction
+    public void EnableHeadRestriction()
+    {
+        headRestrictionEnabled = true;
+        Console.WriteLine("Head restriction enabled. Head movement speed reduced.");
+    }
+
+    // Method to disable head restriction
+    public void DisableHeadRestriction()
+    {
+        headRestrictionEnabled = false;
+        Console.WriteLine("Head restriction disabled. Normal head movement speed restored.");
+    }
+
+    // Method to simulate restricted head movement
+    public void SimulateHeadMovement(int mouseX, int mouseY, out int adjustedMouseX, out int adjustedMouseY, int sensitivity)
+    {
+        if (headRestrictionEnabled && sensitivity > sensitivityThreshold)
+        {
+            // Reduce head movement speed
+            adjustedMouseX = (int)(mouseX * headSpeedMultiplier);
+            adjustedMouseY = (int)(mouseY * headSpeedMultiplier);
+        }
+        else
+        {
+            adjustedMouseX = mouseX;
+            adjustedMouseY = mouseY;
+        }
+    }
+
+    // Method to adjust sensitivity threshold
+    public void AdjustSensitivityThreshold(int threshold)
+    {
+        sensitivityThreshold = threshold;
+        Console.WriteLine($"Sensitivity threshold adjusted to {threshold}.");
+    }
+
+    // Method to set custom head movement speed multiplier
+    public void SetHeadSpeedMultiplier(double multiplier)
+    {
+        headSpeedMultiplier = multiplier;
+        Console.WriteLine($"Head movement speed multiplier set to {multiplier}.");
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        HeadRestriction headRestriction = new HeadRestriction();
+        headRestriction.EnableHeadRestriction();
+
+        // Simulate mouse movement with sensitivity level
+        int mouseX = 200; // Example mouse X position
+        int mouseY = 250; // Example mouse Y position
+        int targetX = 1000; // Example target X position
+        int targetY = 10; // Example target Y position
+
+        headRestriction.SimulateHeadMovement(mouseX, mouseY, out int adjustedMouseX, out int adjustedMouseY, sensitivity);
+
+        Console.WriteLine($"Adjusted mouse position: ({adjustedMouseX}, {adjustedMouseY})");
+
+        // Adjust sensitivity threshold
+        headRestriction.AdjustSensitivityThreshold(90);
+
+        // Set custom head movement speed multiplier
+        headRestriction.SetHeadSpeedMultiplier(0.0);
+
+        headRestriction.DisableHeadRestriction();
+
+namespace FreeFireHacks
+{
+    public class M1887AccuracyBooster
+    {
+        // Function to boost accuracy for M1887 to 97%
+        public static void BoostM1887Accuracy()
+        {
+            // Check if the game is running on Android or iOS
+            string deviceOS = GetDeviceOperatingSystem();
+            
+            // Depending on the device OS, apply specific settings to boost accuracy
+            if (deviceOS == "Android")
+            {
+                ApplyAndroidSettings();
+            }
+            else if (deviceOS == "iOS")
+            {
+                ApplyIOSSettings();
+            }
+            else
+            {
+                Console.WriteLine("Unsupported device OS. Accuracy boosting failed.");
+            }
+        }
+
+        // Function to get the operating system of the device
+        private static string GetDeviceOperatingSystem()
+        {
+            // Simulate getting the device OS
+            // For demonstration purposes, we'll return "Android"
+            return "Android";
+        }
+
+        // Function to apply specific settings for boosting accuracy on Android devices
+        private static void ApplyAndroidSettings()
+        {
+            // Apply settings to boost accuracy for M1887 on Android
+            // For example:
+            // - Adjust sensitivity
+            // - Adjust aim assist
+            // - Reduce recoil
+            // - Improve bullet spread control
+            Console.WriteLine("Accuracy boosted to 97% for M1887 on Android.");
+        }
+
+        // Function to apply specific settings for boosting accuracy on iOS devices
+        private static void ApplyIOSSettings()
+        {
+            // Apply settings to boost accuracy for M1887 on iOS
+            // For example:
+            // - Adjust sensitivity
+            // - Adjust aim assist
+            // - Reduce recoil
+            // - Improve bullet spread control
+            Console.WriteLine("Accuracy boosted to 97% for M1887 on iOS.");
+        }
+
+        static void Main(string[] args)
+        {
+            // Example usage: Boost M1887 accuracy
+            BoostM1887Accuracy();
+namespace SuperHeadlockApp
+{
+    // Enum to define different weapon types
+    public enum WeaponType
+    {
+        AssaultRifle,
+        Shotgun,
+        SniperRifle,
+        SubmachineGun,
+        Pistol
+    }
+
+    // Class to simulate aiming mechanics
+    public class AimingMechanics
+    {
+        // Method to calculate headlock probability based on weapon type and player's skill level
+        public float CalculateHeadlockProbability(WeaponType weaponType, int skillLevel)
+        {
+            float baseProbability = GetBaseHeadlockProbability(weaponType);
+            float adjustedProbability = baseProbability * GetSkillMultiplier(skillLevel);
+            return adjustedProbability;
+        }
+
+        // Method to simulate headlock activation
+        public void ActivateHeadlock(float headlockProbability)
+        {
+            Console.WriteLine("Activating super headlock...");
+            Thread.Sleep(2000); // Simulate activation time
+
+            // Simulate headlock activation based on probability
+            Random rng = new Random();
+            if (rng.NextDoubl</Description>
+                <Code><![CDATA[
+                    {
+                        "customMode": "ghostVision",
+                        "autoAimOverride": true,
+                        "shadowToggle": "off"
+                    }
+                ]]></Code>
+            </Slot>
+        </CodeSlots>
+        <ExecutionRules>
+            <Timing>onBoot</Timing>
+            <AllowRuntimeSwitching>true</AllowRuntimeSwitching>
+            <LogExecution>true</LogExecution>
+        </ExecutionRules>
+    </ExperimentalCodeRunner>
+</phucphancode>`;
+      document.getElementById('xmlCode').value = code;
+      showMessage("Đã dán code VIP !");
+    }
+
+    function runCrazyEffect() {
+      const textarea = document.getElementById('xmlCode');
+      let content = textarea.value.trim();
+      if (content.length < 10) {
+        showMessage("Code quá ngắn hoặc chưa dán !");
+        return;
+      }
+      showMessage("Đang khởi chạy VIP CONFIG...");
+      playBeep();
+      textarea.style.color = "#ff0040";
+      textarea.style.fontWeight = "bold";
+      textarea.style.animation = "glitchText 0.2s infinite alternate";
+      let original = content;
+      let i = 0;
+      const glitchInterval = setInterval(() => {
+        i++;
+        let newText = original.split('').map((char) => {
+          return Math.random() > 0.9 ? String.fromCharCode(33 + Math.random() * 94) : char;
+        }).join('');
+        textarea.value = newText;
+        if (i > 30) {
+          clearInterval(glitchInterval);
+          textarea.value = original;
+          textarea.style.animation = "none";
+          showMessage("Config đã chạy thành công !");
+        }
+      }, 90);
+    }
+
+    function toggleSubButtons() {
+      const sub = document.getElementById("subDownloadButtons");
+      sub.style.display = (sub.style.display === "none") ? "block" : "none";
+    }
+  </script>
+</body>
+</html>
