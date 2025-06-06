@@ -121,6 +121,26 @@
       background: #00ffff;
       box-shadow: 0 0 20px #00ffff;
     }
+
+    /* ❄ Tuyết rơi */
+    .snowflake {
+      position: fixed;
+      top: -10px;
+      color: #ffffff;
+      font-size: 10px;
+      user-select: none;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.8;
+      animation-name: fall;
+      animation-timing-function: linear;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(100vh) rotate(360deg);
+      }
+    }
   </style>
 </head>
 <body>
@@ -129,7 +149,6 @@
   <div class="center-container">
     <div class="login-box" id="login-box">
       <div class="logo-wrapper">
-       
         <img src="https://i.postimg.cc/fL0Vy2ZB/IMG-0079.png" alt="PhucPhan Logo" />
       </div>
 
@@ -150,6 +169,7 @@
 
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script>
+    // particles.js
     particlesJS("particles-js", {
       particles: {
         number: { value: 80 },
@@ -164,6 +184,7 @@
       }
     });
 
+    // Check key
     const keyList = [
       { key: "PP-JL6MP-Y9XQW-KF2ZR-83VTC", expiry: "2025-06-08", getKeyLink: "https://link4m.com/WWvkFd" },
       { key: "PP-X1A2B-Y3C4D-Z5E6F-G7H8I", expiry: "2025-06-09", getKeyLink: "https://link4m.com/bngp6D5E" },
@@ -203,64 +224,25 @@
       } else {
         popup.querySelector("h2").innerHTML = "🚫 KEY KHÔNG HỢP LỆ !";
         popup.querySelector("p").innerText = "Key bạn nhập không đúng hoặc chưa tồn tại";
-        popupLink.href = "https://youtube.com/@phucphantrum?si=AWcldOBwr0DhrpfD?sub_confirmation=1";
+        popupLink.href = "https://youtube.com/@phucphantrum?sub_confirmation=1";
         popupLink.innerText = "🔑 LẤY KEY";
         popup.style.display = "flex";
       }
     });
+
+    // ❄ Hiệu ứng tuyết rơi
+    const snowCount = 60; 
+    for (let i = 0; i < snowCount; i++) {
+      const snowflake = document.createElement("div");
+      snowflake.classList.add("snowflake");
+      snowflake.innerText = "❄";
+      snowflake.style.left = Math.random() * 100 + "vw";
+      snowflake.style.animationDuration = (5 + Math.random() * 5) + "s";
+      snowflake.style.fontSize = (2 + Math.random() * 6) + "px";
+      snowflake.style.opacity = Math.random().toFixed(2);
+      snowflake.style.animationDelay = Math.random() * 5 + "s";
+      document.body.appendChild(snowflake);
+    }
   </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <title></title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background: #000; 
-      overflow: hidden;
-    }
-
-    .snowflake {
-      position: fixed;
-      top: -10px;
-      color: #ffffff;
-      font-size: 10px;
-      user-select: none;
-      pointer-events: none;
-      z-index: 9999;
-      opacity: 0.8;
-      animation-name: fall;
-      animation-timing-function: linear;
-    }
-
-    @keyframes fall {
-      to {
-        transform: translateY(100vh) rotate(360deg);
-      }
-    }
-  </style>
-</head>
-<body>
-
-<script>
-  const snowCount = 60; 
-  for (let i = 0; i < snowCount; i++) {
-    const snowflake = document.createElement("div");
-    snowflake.classList.add("snowflake");
-    snowflake.innerText = "❄";
-    snowflake.style.left = Math.random() * 100 + "vw";
-    snowflake.style.animationDuration = (5 + Math.random() * 5) + "s";
-    snowflake.style.fontSize = (2 + Math.random() * 6) + "px";
-    snowflake.style.opacity = Math.random().toFixed(2);
-    snowflake.style.animationDelay = Math.random() * 5 + "s";
-    document.body.appendChild(snowflake);
-  }
-</script>
-
 </body>
 </html>
