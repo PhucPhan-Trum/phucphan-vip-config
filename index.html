@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phuc Phan Tweak</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="particles-js"></div>
+
+  <div class="center-container">
+    <div class="login-box" id="login-box">
+
+
+      <div class="logo-wrapper">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1024px-React-icon.svg.png" 
+             alt="Logo" class="logo-spin-glow">
+      </div>
+
+      <h2>Phuc Phan</h2>
+      <form id="login-form">
+        <input type="text" id="password" placeholder="Nhập Key" required />
+        <button type="submit">Đăng Nhập</button>
+      </form>
+      <p class="copy">Copyright 2025 Phuc Phan</p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script>
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 80 },
+        color: { value: "#00ffcc" },
+        shape: { type: "circle" },
+        opacity: { value: 0.5 },
+        size: { value: 3 },
+        move: { enable: true, speed: 1 }
+      },
+      interactivity: {
+        events: { onhover: { enable: true, mode: "repulse" } }
+      }
+    });
+
+    document.getElementById("login-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const pass = document.getElementById("password").value;
+      if (pass === "phucphan") {
+        document.body.classList.add("fade-out");
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 1000);
+      } else {
+        alert("Mã KEY không đúng. Vui lòng thử lại");
+      }
+    });
+  </script>
+</body>
+</html>
