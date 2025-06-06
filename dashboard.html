@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phuc Phan X Tweak</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: black;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+    }
+
+    .snow-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .snowflake {
+      position: absolute;
+      top: -10px;
+      color: #00fff7;
+      font-size: 10px;
+      user-select: none;
+      opacity: 0.85;
+      text-shadow: 0 0 5px #00fff7, 0 0 10px #00fff7, 0 0 15px #00fff7;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 60px auto;
+      padding: 20px;
+      text-align: center;
+      animation: fadeIn 1.5s ease;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #00ffcc;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      font-size: 32px;
+      color: #00ffcc;
+    }
+
+    .setting {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 20px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0;
+      right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 20px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #00ffcc;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    .dropdown, .input-box {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      background: #111;
+      border: 1px solid #00ffcc;
+      color: #00ffcc;
+      border-radius: 6px;
+    }
+
+    .textarea-box {
+      width: 100%;
+      height: 120px;
+      background: #111;
+      color: #00ffcc;
+      border: 1px solid #00ffcc;
+      border-radius: 8px;
+      padding: 10px;
+      font-family: monospace;
+      resize: none;
+    }
+
+    .run-btn, .stop-btn, .activate-btn {
+      background: #00ffcc;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      color: #000;
+      transition: 0.3s;
+    }
+
+    .run-btn:hover, .stop-btn:hover, .activate-btn:hover {
+      background: #00ccaa;
+    }
+
+    .notify {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111;
+      padding: 12px 20px;
+      border: 1px solid #00ffcc;
+      border-radius: 10px;
+      color: #00ffcc;
+      font-size: 16px;
+      opacity: 0;
+      transition: 0.4s;
+      z-index: 999;
+    }
+
+    .links {
+      margin-top: 20px;
+    }
+
+    .links a {
+      color: #00ffcc;
+      margin: 0 10px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .logo {
+      width: 80px;
+      margin-bottom: 10px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <div class="snow-container" id="snow-container"></div>
+
+  <audio id="beepSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+
+  <div class="notify" id="notify"></div>
+
+  <div class="container">
+    <img src="https://i.postimg.cc/nhZNPfKL/IMG-0441.png" class="logo" alt="Logo" />
+    <h1><span class="lux">Phuc Phan</span> <span class="config">Tweak</span></h1>
+
+    <div class="card">
+      <h2>CHỨC NĂNG</h2>
+      <div class="setting"><span>⚙️ Demo Cn1</span><label class="switch"><input type="checkbox" onclick="showMessage('Chạy thành công ')"><span class="slider"></span></label></div>
+      <div class="setting"><span>💡 Demo Cn2</span><label class="switch"><input type="checkbox" onclick="showMessage('Chạy thành công ')"><span class="slider"></span></label></div>
+      <div class="setting"><span>🚀 Demo Cn3</span><label class="switch"><input type="checkbox" onclick="showMessage('Chạy thành công ')"><span class="slider"></span></label></div>
+      <div class="setting"><span>🎯 Demo Cn4</span><label class="switch"><input type="checkbox" onclick="showMessage('Chạy thành công ')"><span class="slider"></span></label></div>
+      <div class="setting"><span>🔋 Demo Cn5</span><label class="switch"><input type="checkbox" onclick="showMessage('Chạy thành công ')"><span class="slider"></span></label></div>
+    </div>
+
+    <div class="card">
+      <h2>DÁN CODE CONFIG</h2>
+      <textarea id="xmlCode" class="textarea-box" placeholder="Dán code config vào đây..."></textarea>
+      <br>
+      <button class="run-btn" onclick="runConfig()">CHẠY CẤU HÌNH</button>
+      <button class="stop-btn" onclick="stopConfig()">TẮT CẤU HÌNH</button>
+    </div>
+
+    <div class="card">
+      <h2>📲 Phuc Phan</h2>
+      <div class="setting"><span>🖥•</span><div class="input-box">Thiết bị hoạt động</div></div>
+      <div class="setting"><span>🎮•</span>
+        <select class="dropdown">
+          <option>Mượt</option>
+          <option>Nhanh</option>
+          <option>Siêu Mượt</option>
+        </select>
+      </div>
+      <div class="setting"><span>🖱️•</span>
+        <select class="dropdown">
+          <option>1.0x</option>
+          <option>1.5x</option>
+          <option>2.0x</option>
+          <option>2.5x</option>
+          <option>3.0x</option>
+          <option>3.5x</option>
+          <option>4.0x</option>
+        </select>
+      </div>
+      <button class="activate-btn" onclick="showMessage('Chạy thành công ')"> SENSI ACTIVE</button>
+    </div>
+
+    <div class="links">
+      <a href="https://zalo.me/0964943392" target="_blank">Zalo</a>
+      <a href="https://www.facebook.com/share/1GfrU8Vj7d/?mibextid=wwXIfr" target="_blank">Facebook</a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script>
+    // Particles
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 80 },
+        color: { value: "#00ffcc" },
+        shape: { type: "circle" },
+        opacity: { value: 0.5 },
+        size: { value: 3 },
+        move: { enable: true, speed: 1 }
+      },
+      interactivity: {
+        events: { onhover: { enable: true, mode: "repulse" } }
+      }
+    });
+
+    // Snow effect
+    const snowContainer = document.getElementById('snow-container');
+    function createSnowflake() {
+      const snowflake = document.createElement('div');
+      snowflake.classList.add('snowflake');
+      snowflake.innerHTML = '❄';
+      const size = Math.random() * 1 + 2;
+      snowflake.style.fontSize = `${size}px`;
+      snowflake.style.left = Math.random() * window.innerWidth + 'px';
+      snowflake.style.animationDuration = (Math.random() * 1 + 3) + 's';
+      snowContainer.appendChild(snowflake);
+      setTimeout(() => snowflake.remove(), 15000);
+    }
+    setInterval(createSnowflake, 80);
+
+    // Notification & Sound
+    function playBeep() {
+      const beep = document.getElementById('beepSound');
+      if (beep) beep.play();
+    }
+
+    function showMessage(msg) {
+      const n = document.getElementById('notify');
+      n.innerText = msg;
+      n.style.opacity = 1;
+      playBeep();
+      setTimeout(() => { n.style.opacity = 0; }, 2000);
+    }
+
+    function runConfig() {
+      const code = document.getElementById('xmlCode').value.trim();
+      if (code.length < 10) {
+        showMessage("Vui lòng dán nội dung hợp lệ");
+      } else {
+        showMessage("Chạy thành công !");
+      }
+    }
+
+    function stopConfig() {
+      showMessage("Đã tắt cấu hình !");
+    }
+  </script>
+</body>
+</html>
